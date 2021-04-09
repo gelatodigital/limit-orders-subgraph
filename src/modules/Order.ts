@@ -6,9 +6,9 @@ export const CANCELLED = 'cancelled'
 
 export function getAddressByNetwork(network: string): Address {
   if (network == 'mainnet') {
-    return Address.fromString('0xd412054cca18a61278ced6f674a526a6940ebd84')
-  } if (network == 'rinkeby') {
-    return Address.fromString('0xd412054cca18a61278ced6f674a526a6940ebd84')
+    return Address.fromString('0x36049D479A97CdE1fC6E2a5D2caE30B666Ebf92B')
+  } if (network == 'ropsten') {
+    return Address.fromString('0xb6c2E1B5AB82d8e555ABAa00BAc4606Ab5EA4668')
   }
 
   throw 'No Address specified'

@@ -129,7 +129,7 @@ export class OrderExecuted__Params {
   }
 }
 
-export class PineCore__decodeOrderResult {
+export class GelatoPineCore__decodeOrderResult {
   value0: Address;
   value1: Address;
   value2: Address;
@@ -165,9 +165,9 @@ export class PineCore__decodeOrderResult {
   }
 }
 
-export class PineCore extends SmartContract {
-  static bind(address: Address): PineCore {
-    return new PineCore("PineCore", address);
+export class GelatoPineCore extends SmartContract {
+  static bind(address: Address): GelatoPineCore {
+    return new GelatoPineCore("GelatoPineCore", address);
   }
 
   ETH_ADDRESS(): Address {
@@ -228,10 +228,10 @@ export class PineCore extends SmartContract {
     return CallResult.fromValue(value[0].toBoolean());
   }
 
-  decodeOrder(_data: Bytes): PineCore__decodeOrderResult {
+  decodeOrder(_data: Bytes): GelatoPineCore__decodeOrderResult {
     let result = super.call("decodeOrder", [EthereumValue.fromBytes(_data)]);
 
-    return new PineCore__decodeOrderResult(
+    return new GelatoPineCore__decodeOrderResult(
       result[0].toAddress(),
       result[1].toAddress(),
       result[2].toAddress(),
@@ -241,14 +241,14 @@ export class PineCore extends SmartContract {
     );
   }
 
-  try_decodeOrder(_data: Bytes): CallResult<PineCore__decodeOrderResult> {
+  try_decodeOrder(_data: Bytes): CallResult<GelatoPineCore__decodeOrderResult> {
     let result = super.tryCall("decodeOrder", [EthereumValue.fromBytes(_data)]);
     if (result.reverted) {
       return new CallResult();
     }
     let value = result.value;
     return CallResult.fromValue(
-      new PineCore__decodeOrderResult(
+      new GelatoPineCore__decodeOrderResult(
         value[0].toAddress(),
         value[1].toAddress(),
         value[2].toAddress(),
