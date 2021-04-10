@@ -6,10 +6,10 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: ERC20
-    network: {{ network }}
+    network: {{network }}
     source:
       abi: ERC20
-      startBlock: {{ startBlock }}
+      startBlock: {{startBlock}}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.3
@@ -27,11 +27,11 @@ dataSources:
       file: ./src/handlers/ERC20.ts
   - kind: ethereum/contract
     name: GelatoPineCore
-    network: {{ network }}
+    network: {{network}}
     source:
       abi: GelatoPineCore
-      startBlock: {{ startBlock }}
-      address: '{{address}}'
+      startBlock: {{startBlock}}
+      address: "{{address}}"
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.3
@@ -49,4 +49,3 @@ dataSources:
         - event: OrderCancelled(indexed bytes32,address,address,address,bytes,uint256)
           handler: handleOrderCancelled
       file: ./src/handlers/Order.ts
-      

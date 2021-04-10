@@ -7,22 +7,12 @@
     "deploy:mainnet": "npm run prepare:mainnet && graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ gelatodigital/limit-orders",
     "deploy:ropsten": "npm run prepare:ropsten && graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ gelatodigital/limit-orders-ropsten",
     "prepare:mainnet": "mustache config/mainnet.json subgraph.template.yaml > subgraph.yaml",
-    "prepare:ropsten": "mustache config/ropsten.json subgraph.template.yaml > subgraph.yaml",
+    "prepare:ropsten": "mustache config/ropsten.json subgraph.template.yaml > subgraph.yaml"
   },
   "devDependencies": {
-    "@graphprotocol/graph-cli": "^0.16.0",
-    "@graphprotocol/graph-ts": "^0.16.0",
-    "mustache": "^4.0.1",
-    "ts-node": "^8.5.4",
-    "typescript": "^3.7.4"
-  },
-  "dependencies": {
-    "babel-polyfill": "^6.26.0",
-    "babel-register": "^6.26.0",
-    "prettier": "^1.19.1",
-    "truffle": "^5.0.4",
-    "truffle-contract": "^4.0.5",
-    "truffle-hdwallet-provider": "^1.0.4",
-    "tslint-plugin-prettier": "^2.0.1"
+    "@graphprotocol/graph-cli": "0.16.0",
+    "@graphprotocol/graph-ts": "0.16.0",
+    "mustache": "4.0.1",
+    "typescript": "4.2.4"
   }
 }
