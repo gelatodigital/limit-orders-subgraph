@@ -1,7 +1,7 @@
-# Pine Finance orders graph
+# Gelato Limit Orders
 
-- Mainnet: https://thegraph.com/explorer/subgraph/pine-finance/pine_orders
-- Rinkeby: https://thegraph.com/explorer/subgraph/pine-finance/pine_orders_rinkeby
+- Mainnet: https://thegraph.com/explorer/subgraph/gelatodigital/limit-orders
+- Ropsten: https://thegraph.com/explorer/subgraph/gelatodigital/limit-orders-ropsten
 
 ### Install
 
@@ -20,3 +20,5 @@ npm run deploy:mainnet
 ```bash
 npm run deploy:rinkeby
 ```
+
+Forked from https://github.com/pine-finance/orders

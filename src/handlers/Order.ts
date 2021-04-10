@@ -1,7 +1,7 @@
 import { log, BigInt, Address, ByteArray, Bytes, dataSource } from '@graphprotocol/graph-ts'
 
 import { Transfer } from '../entities/ERC20/ERC20'
-import { DepositETH, OrderExecuted, OrderCancelled, PineCore } from '../entities/PineCore/PineCore'
+import { DepositETH, OrderExecuted, OrderCancelled, GelatoPineCore } from '../entities/GelatoPineCore/GelatoPineCore'
 
 import { Order } from '../entities/schema'
 import { getAddressByNetwork, OPEN, CANCELLED, EXECUTED } from '../modules/Order'
@@ -68,10 +68,10 @@ export function handleOrderCreationByERC20Transfer(event: Transfer): void {
   let witness = '0x' + event.transaction.input.toHexString().substr(index.minus(BigInt.fromI32((64 * 2) - 24)).toI32(), 40)
   let data = Bytes.fromHexString('0x' + event.transaction.input.toHexString().substr(index.plus(BigInt.fromI32(64 * 2)).toI32(), 64 * 2)) as Bytes
 
-  let pineCore = PineCore.bind(getAddressByNetwork(dataSource.network()))
+  let gelatoPineCore = GelatoPineCore.bind(getAddressByNetwork(dataSource.network()))
 
   let order = new Order(
-    pineCore.keyOf(
+    gelatoPineCore.keyOf(
       Address.fromString(module),
       Address.fromString(inputToken),
       Address.fromString(owner),
@@ -159,8 +159,8 @@ export function handleOrderCancelled(event: OrderCancelled): void {
   // Check if the cancel was a complete success or not.
   // Sometimes by running out of gas the tx is partially completed
   // check: https://etherscan.io/tx/0x29da2e620e5f8606d74a9b73c353a8f393acc9cd58c1750dd2edd05cf33a5d1c
-  let pineCore = PineCore.bind(event.address)
-  let res = pineCore.try_existOrder(
+  let gelatoPineCore = GelatoPineCore.bind(event.address)
+  let res = gelatoPineCore.try_existOrder(
     Address.fromString(order.module),
     Address.fromString(order.inputToken),
     Address.fromString(order.owner),

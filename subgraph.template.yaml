@@ -1,12 +1,12 @@
 specVersion: 0.0.2
-description: Pine Finance orders
-repository: https://github.com/pine-finance/orders
+description: Gelato Limit Orders Subgraph
+repository: https://github.com/gelatodigital/limit-orders-subgraph
 schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum/contract
     name: ERC20
-    network: {{network }}
+    network: {{ network }}
     source:
       abi: ERC20
       startBlock: {{ startBlock }}
@@ -19,17 +19,17 @@ dataSources:
       abis:
         - name: ERC20
           file: ./abis/ERC20.json
-        - name: PineCore
-          file: ./abis/PineCore.json
+        - name: GelatoPineCore
+          file: ./abis/GelatoPineCore.json
       eventHandlers:
         - event: Transfer(indexed address,indexed address,uint256)
           handler: handleERC20Transfer
       file: ./src/handlers/ERC20.ts
   - kind: ethereum/contract
-    name: PineCore
+    name: GelatoPineCore
     network: {{ network }}
     source:
-      abi: PineCore
+      abi: GelatoPineCore
       startBlock: {{ startBlock }}
       address: '{{address}}'
     mapping:
@@ -39,8 +39,8 @@ dataSources:
       entities:
         - Order
       abis:
-        - name: PineCore
-          file: ./abis/PineCore.json
+        - name: GelatoPineCore
+          file: ./abis/GelatoPineCore.json
       eventHandlers:
         - event: DepositETH(indexed bytes32,indexed address,uint256,bytes)
           handler: handleETHOrderCreated
@@ -49,3 +49,4 @@ dataSources:
         - event: OrderCancelled(indexed bytes32,address,address,address,bytes,uint256)
           handler: handleOrderCancelled
       file: ./src/handlers/Order.ts
+      
