@@ -6,19 +6,23 @@
 ### Install
 
 ```bash
-npm run install
+yarn install
 ```
 
 ### Deploy mainnet
 
 ```bash
-npm run deploy:mainnet
+yarn prepare:mainnet
+
+yarn deploy:mainnet
 ```
 
-### Deploy rinkeby
+### Deploy ropsten
 
 ```bash
-npm run deploy:rinkeby
+yarn prepare:ropsten
+
+yarn deploy:ropsten
 ```
 
 Forked from https://github.com/pine-finance/orders
