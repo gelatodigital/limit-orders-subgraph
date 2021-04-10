@@ -1,7 +1,7 @@
 # Gelato Limit Orders
 
-- Mainnet: https://thegraph.com/explorer/subgraph/pine-finance/pine_orders
-- Ropsten: https://thegraph.com/explorer/subgraph/pine-finance/pine_orders_rinkeby
+- Mainnet: https://thegraph.com/explorer/subgraph/gelatodigital/limit-orders
+- Ropsten: https://thegraph.com/explorer/subgraph/gelatodigital/limit-orders-ropsten
 
 ### Install
 
