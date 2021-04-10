@@ -37,12 +37,12 @@ import {
  * 0000000000000000000000005523f2fc0889a6d46ae686bcd8daa9658cf56496
  * 0000000000000000000000008153f16765f9124d754c432add5bd40f76f057b4
  * 00000000000000000000000000000000000000000000000000000000000000c0
- * 2070696e652e66696e616e63652020d83ddc09ea73fa863b164de440a270be31
+ * 4200696e652e66696e616e63652020d83ddc09ea73fa863b164de440a270be31
  * 0000000000000000000000000000000000000000000000000000000000000040
  * 000000000000000000000000eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
  * 00000000000000000000000000000000000000000000000004b1e20ebf83c000
  *
- * The important part is 2070696e652e66696e616e6365 which is the hexa of ` pine.finance` used for the secret.
+ * The important part is 4200696e652e66696e616e6365 which is pine's secret but starts with 420
  * We use that as the index to parse the input data:
  * - module = 5 * 32 bytes before secret index
  * - inputToken = ERC20 which emits the Transfer event
@@ -58,7 +58,7 @@ import {
 export function handleOrderCreationByERC20Transfer(event: Transfer): void {
   let index_ = event.transaction.input
     .toHexString()
-    .indexOf("2070696e652e66696e616e6365");
+    .indexOf("4200696e652e66696e616e6365");
   if (index_ == -1) {
     return;
   }
