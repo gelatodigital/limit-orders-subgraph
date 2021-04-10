@@ -2,16 +2,18 @@
   "name": "limit-orders-subgraph",
   "version": "0.1.0",
   "scripts": {
-    "codegen": "graph codegen --debug --output-dir src/entities/",
     "build": "graph build",
-    "prepare:mainnet": "mustache config/mainnet.json subgraph.template.yaml > subgraph.yaml",
-    "prepare:ropsten": "mustache config/ropsten.json subgraph.template.yaml > subgraph.yaml",
+    "codegen": "graph codegen --debug --output-dir src/entities/",
+    "format": "prettier --write '*/**/*.{js,json,md,ts}'",
     "deploy:mainnet": "yarn prepare:mainnet && graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ gelatodigital/limit-orders",
-    "deploy:ropsten": "yarn prepare:ropsten && graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ gelatodigital/limit-orders-ropsten"
+    "deploy:ropsten": "yarn prepare:ropsten && graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ gelatodigital/limit-orders-ropsten",
+    "prepare:mainnet": "mustache config/mainnet.json subgraph.template.yaml > subgraph.yaml",
+    "prepare:ropsten": "mustache config/ropsten.json subgraph.template.yaml > subgraph.yaml"
   },
   "devDependencies": {
     "@graphprotocol/graph-cli": "0.16.0",
     "@graphprotocol/graph-ts": "0.16.0",
+    "husky": "6.0.0",
     "mustache": "4.0.1",
     "typescript": "4.2.4"
   }
