@@ -12,16 +12,12 @@ yarn install
 ### Deploy mainnet
 
 ```bash
-yarn prepare:mainnet
-
 yarn deploy:mainnet
 ```
 
 ### Deploy ropsten
 
 ```bash
-yarn prepare:ropsten
-
 yarn deploy:ropsten
 ```
 
