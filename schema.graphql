@@ -18,6 +18,7 @@ type Order @entity {
   blockNumber: BigInt!
   createdAt: BigInt!
   updatedAt: BigInt!
+  updatedAtBlock: BigInt!
   data: Bytes!
   inputData: Bytes!
 }

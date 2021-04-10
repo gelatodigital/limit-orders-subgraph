@@ -6,7 +6,7 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: ERC20
-    network: {{network }}
+    network: {{network}}
     source:
       abi: ERC20
       startBlock: {{startBlock}}

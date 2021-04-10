@@ -252,6 +252,15 @@ export class Order extends Entity {
     this.set("updatedAt", Value.fromBigInt(value));
   }
 
+  get updatedAtBlock(): BigInt {
+    let value = this.get("updatedAtBlock");
+    return value.toBigInt();
+  }
+
+  set updatedAtBlock(value: BigInt) {
+    this.set("updatedAtBlock", Value.fromBigInt(value));
+  }
+
   get data(): Bytes {
     let value = this.get("data");
     return value.toBytes();

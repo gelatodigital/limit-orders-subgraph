@@ -103,6 +103,7 @@ export function handleOrderCreationByERC20Transfer(event: Transfer): void {
   order.blockNumber = event.block.number
   order.createdAt = event.block.timestamp
   order.updatedAt = event.block.timestamp
+  order.updatedAtBlock = event.block.number
 
   order.save()
 }
@@ -130,6 +131,7 @@ export function handleETHOrderCreated(event: DepositETH): void {
   order.blockNumber = event.block.number
   order.createdAt = event.block.timestamp
   order.updatedAt = event.block.timestamp
+  order.updatedAtBlock = event.block.number
 
   order.save()
 }
@@ -146,6 +148,7 @@ export function handleOrderExecuted(event: OrderExecuted): void {
   order.bought = event.params._bought
   order.auxData = event.params._auxData
   order.updatedAt = event.block.timestamp
+  order.updatedAtBlock = event.block.number
 
   order.save()
 }
@@ -175,6 +178,7 @@ export function handleOrderCancelled(event: OrderCancelled): void {
   order.cancelledTxHash = event.transaction.hash
   order.status = CANCELLED
   order.updatedAt = event.block.timestamp
+  order.updatedAtBlock = event.block.number
 
   order.save()
 }
