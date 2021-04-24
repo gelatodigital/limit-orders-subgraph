@@ -19,6 +19,7 @@ type Order @entity {
   createdAt: BigInt!
   updatedAt: BigInt!
   updatedAtBlock: BigInt!
+  updatedAtBlockHash: String!
   data: Bytes!
   inputData: Bytes!
 }
