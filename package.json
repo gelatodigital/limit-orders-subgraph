@@ -5,6 +5,7 @@
     "build": "graph build",
     "codegen": "graph codegen --debug --output-dir src/entities/",
     "format": "prettier --write '*/**/*.{js,json,md,ts}'",
+    "deploy:experimental": "yarn prepare:mainnet && graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ hilmarx/experimental-limit-orders",
     "deploy:mainnet": "yarn prepare:mainnet && graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ gelatodigital/limit-orders",
     "deploy:ropsten": "yarn prepare:ropsten && graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ gelatodigital/limit-orders-ropsten",
     "postinstall": "yarn husky install",
