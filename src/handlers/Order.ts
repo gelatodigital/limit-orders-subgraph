@@ -1,11 +1,17 @@
 import {
-  Address, BigInt, ByteArray,
+  Address,
+  BigInt,
+  ByteArray,
   Bytes,
-  dataSource, log
+  dataSource,
+  log
 } from "@graphprotocol/graph-ts";
 import { Transfer } from "../entities/ERC20/ERC20";
 import {
-  DepositETH, GelatoPineCore, OrderCancelled, OrderExecuted
+  DepositETH,
+  GelatoPineCore,
+  OrderCancelled,
+  OrderExecuted
 } from "../entities/GelatoPineCore/GelatoPineCore";
 import { Order } from "../entities/schema";
 import {
@@ -14,8 +20,6 @@ import {
   getAddressByNetwork,
   OPEN
 } from "../modules/Order";
-
-
 
 /**
  * @dev ERC20 transfer should have an extra data we use to identify a pine order.
@@ -92,14 +96,16 @@ export function handleOrderCreationByERC20Transfer(event: Transfer): void {
     event.transaction.input
       .toHexString()
       .substr(index.minus(BigInt.fromI32(64 * 5 - 24)).toI32(), 40);
-  let inputToken = "0x" +
-  event.transaction.input
-    .toHexString()
-    .substr(index.minus(BigInt.fromI32(64 * 4 - 24)).toI32(), 40);
-  let owner = "0x" +
-  event.transaction.input
-    .toHexString()
-    .substr(index.minus(BigInt.fromI32(64 * 3 - 24)).toI32(), 40);
+  let inputToken =
+    "0x" +
+    event.transaction.input
+      .toHexString()
+      .substr(index.minus(BigInt.fromI32(64 * 4 - 24)).toI32(), 40);
+  let owner =
+    "0x" +
+    event.transaction.input
+      .toHexString()
+      .substr(index.minus(BigInt.fromI32(64 * 3 - 24)).toI32(), 40);
   let witness =
     "0x" +
     event.transaction.input
@@ -122,7 +128,7 @@ export function handleOrderCreationByERC20Transfer(event: Transfer): void {
       Address.fromString(inputToken),
       Address.fromString(owner),
       Address.fromString(witness),
-      data 
+      data
     );
 
     // Skip multiple transfer events ^2
@@ -138,8 +144,6 @@ export function handleOrderCreationByERC20Transfer(event: Transfer): void {
       return;
     }
   }
-
-  
 
   let order = new Order(
     gelatoPineCore
@@ -192,7 +196,7 @@ export function handleOrderCreationByERC20Transfer(event: Transfer): void {
 
 export function handleETHOrderCreated(event: DepositETH): void {
   let order = new Order(event.params._key.toHex());
-  
+
   // Order data
   order.owner = "0x" + event.params._data.toHex().substr(2 + 64 * 2 + 24, 40); /// 1 - 32 bytes
   order.module = "0x" + event.params._data.toHex().substr(2 + 64 * 0 + 24, 40); /// 0 - 20 bytes
