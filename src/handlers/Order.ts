@@ -1,26 +1,24 @@
 import {
-  log,
-  BigInt,
   Address,
+  BigInt,
   ByteArray,
   Bytes,
-  dataSource
+  dataSource,
+  log
 } from "@graphprotocol/graph-ts";
-
 import { Transfer } from "../entities/ERC20/ERC20";
 import {
   DepositETH,
-  OrderExecuted,
+  GelatoPineCore,
   OrderCancelled,
-  GelatoPineCore
+  OrderExecuted
 } from "../entities/GelatoPineCore/GelatoPineCore";
-
 import { Order } from "../entities/schema";
 import {
-  getAddressByNetwork,
-  OPEN,
   CANCELLED,
-  EXECUTED
+  EXECUTED,
+  getAddressByNetwork,
+  OPEN
 } from "../modules/Order";
 
 /**
@@ -63,22 +61,16 @@ export function handleOrderCreationByERC20Transfer(event: Transfer): void {
     return;
   }
 
-  // Skip multiple transfer events
+  let doMultipleCheck2 = false;
   let recipient =
     "0x" +
     event.transaction.input
       .toHexString()
       .substr(BigInt.fromI32(10 + 24).toI32(), 40);
+
+  // Skip multiple transfer events
   if (recipient != event.params.to.toHexString()) {
-    log.debug(
-      "Skipped Transfer recipient expected {}, but receive {}. On Tx {}",
-      [
-        recipient,
-        event.params.to.toHexString(),
-        event.transaction.hash.toHexString()
-      ]
-    );
-    return;
+    doMultipleCheck2 = true;
   }
 
   let index = BigInt.fromI32(index_);
@@ -104,8 +96,16 @@ export function handleOrderCreationByERC20Transfer(event: Transfer): void {
     event.transaction.input
       .toHexString()
       .substr(index.minus(BigInt.fromI32(64 * 5 - 24)).toI32(), 40);
-  let inputToken = event.transaction.to.toHex();
-  let owner = event.transaction.from.toHex();
+  let inputToken =
+    "0x" +
+    event.transaction.input
+      .toHexString()
+      .substr(index.minus(BigInt.fromI32(64 * 4 - 24)).toI32(), 40);
+  let owner =
+    "0x" +
+    event.transaction.input
+      .toHexString()
+      .substr(index.minus(BigInt.fromI32(64 * 3 - 24)).toI32(), 40);
   let witness =
     "0x" +
     event.transaction.input
@@ -121,6 +121,29 @@ export function handleOrderCreationByERC20Transfer(event: Transfer): void {
   let gelatoPineCore = GelatoPineCore.bind(
     getAddressByNetwork(dataSource.network())
   );
+
+  if (doMultipleCheck2) {
+    let vaultOfOrder = gelatoPineCore.vaultOfOrder(
+      Address.fromString(module),
+      Address.fromString(inputToken),
+      Address.fromString(owner),
+      Address.fromString(witness),
+      data
+    );
+
+    // Skip multiple transfer events ^2
+    if (vaultOfOrder.toHexString() != event.params.to.toHexString()) {
+      log.debug(
+        "Skip Check 2: Skipped Transfer vaultOfOrder expected {}, but receive {}. On Tx {}",
+        [
+          vaultOfOrder.toHexString(),
+          event.params.to.toHexString(),
+          event.transaction.hash.toHexString()
+        ]
+      );
+      return;
+    }
+  }
 
   let order = new Order(
     gelatoPineCore
@@ -175,7 +198,7 @@ export function handleETHOrderCreated(event: DepositETH): void {
   let order = new Order(event.params._key.toHex());
 
   // Order data
-  order.owner = event.transaction.from.toHex();
+  order.owner = "0x" + event.params._data.toHex().substr(2 + 64 * 2 + 24, 40); /// 1 - 32 bytes
   order.module = "0x" + event.params._data.toHex().substr(2 + 64 * 0 + 24, 40); /// 0 - 20 bytes
   order.inputToken =
     "0x" + event.params._data.toHex().substr(2 + 64 * 1 + 24, 40); /// 1 - 32 bytes
@@ -190,7 +213,7 @@ export function handleETHOrderCreated(event: DepositETH): void {
     ).reverse() as Bytes
   ); // 8 - 32 bytes
   order.inputAmount = event.params._amount;
-  order.vault = event.transaction.to.toHex();
+  order.vault = getAddressByNetwork(dataSource.network()).toHexString();
   order.data = Bytes.fromHexString(
     "0x" + event.params._data.toHex().substr(2 + 64 * 7, 64 * 2)
   ) as Bytes;
