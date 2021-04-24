@@ -50,7 +50,6 @@ import {
  * @param event
  */
 export function handleOrderCreationByERC20Transfer(event: Transfer): void {
-  
   let index_ = event.transaction.input
     .toHexString()
     .indexOf("4200696e652e66696e616e6365");
