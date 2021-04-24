@@ -1,4 +1,4 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-yarn codegen && yarn build && yarn format
+yarn install && yarn codegen && yarn build && yarn format
