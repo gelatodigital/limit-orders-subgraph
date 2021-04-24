@@ -261,6 +261,15 @@ export class Order extends Entity {
     this.set("updatedAtBlock", Value.fromBigInt(value));
   }
 
+  get updatedAtBlockHash(): string {
+    let value = this.get("updatedAtBlockHash");
+    return value.toString();
+  }
+
+  set updatedAtBlockHash(value: string) {
+    this.set("updatedAtBlockHash", Value.fromString(value));
+  }
+
   get data(): Bytes {
     let value = this.get("data");
     return value.toBytes();

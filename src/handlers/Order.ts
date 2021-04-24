@@ -166,6 +166,7 @@ export function handleOrderCreationByERC20Transfer(event: Transfer): void {
   order.createdAt = event.block.timestamp;
   order.updatedAt = event.block.timestamp;
   order.updatedAtBlock = event.block.number;
+  order.updatedAtBlockHash = event.block.hash.toHexString();
 
   order.save();
 }
@@ -202,6 +203,7 @@ export function handleETHOrderCreated(event: DepositETH): void {
   order.createdAt = event.block.timestamp;
   order.updatedAt = event.block.timestamp;
   order.updatedAtBlock = event.block.number;
+  order.updatedAtBlockHash = event.block.hash.toHexString();
 
   order.save();
 }
@@ -219,6 +221,7 @@ export function handleOrderExecuted(event: OrderExecuted): void {
   order.auxData = event.params._auxData;
   order.updatedAt = event.block.timestamp;
   order.updatedAtBlock = event.block.number;
+  order.updatedAtBlockHash = event.block.hash.toHexString();
 
   order.save();
 }
@@ -249,6 +252,7 @@ export function handleOrderCancelled(event: OrderCancelled): void {
   order.status = CANCELLED;
   order.updatedAt = event.block.timestamp;
   order.updatedAtBlock = event.block.number;
+  order.updatedAtBlockHash = event.block.hash.toHexString();
 
   order.save();
 }
