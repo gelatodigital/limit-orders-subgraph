@@ -96,11 +96,7 @@ export function handleOrderCreationByERC20Transfer(event: Transfer): void {
     event.transaction.input
       .toHexString()
       .substr(index.minus(BigInt.fromI32(64 * 5 - 24)).toI32(), 40);
-  let inputToken =
-    "0x" +
-    event.transaction.input
-      .toHexString()
-      .substr(index.minus(BigInt.fromI32(64 * 4 - 24)).toI32(), 40);
+  let inputToken = event.address;
   let owner =
     "0x" +
     event.transaction.input
@@ -125,7 +121,7 @@ export function handleOrderCreationByERC20Transfer(event: Transfer): void {
   if (doMultipleCheck2) {
     let vaultOfOrder = gelatoPineCore.vaultOfOrder(
       Address.fromString(module),
-      Address.fromString(inputToken),
+      inputToken,
       Address.fromString(owner),
       Address.fromString(witness),
       data
@@ -149,7 +145,7 @@ export function handleOrderCreationByERC20Transfer(event: Transfer): void {
     gelatoPineCore
       .keyOf(
         Address.fromString(module),
-        Address.fromString(inputToken),
+        inputToken,
         Address.fromString(owner),
         Address.fromString(witness),
         data
@@ -160,7 +156,7 @@ export function handleOrderCreationByERC20Transfer(event: Transfer): void {
   // Order data
   order.owner = owner;
   order.module = module;
-  order.inputToken = inputToken;
+  order.inputToken = inputToken.toHexString();
   order.witness = witness;
   order.secret =
     "0x" + event.transaction.input.toHexString().substr(index.toI32(), 64);
