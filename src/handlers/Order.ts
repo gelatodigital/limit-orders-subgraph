@@ -145,17 +145,23 @@ export function handleOrderCreationByERC20Transfer(event: Transfer): void {
     }
   }
 
-  let order = new Order(
-    gelatoPineCore
-      .keyOf(
-        Address.fromString(module),
-        Address.fromString(inputToken),
-        Address.fromString(owner),
-        Address.fromString(witness),
-        data
-      )
-      .toHex()
-  );
+  let orderId = gelatoPineCore
+  .keyOf(
+    Address.fromString(module),
+    Address.fromString(inputToken),
+    Address.fromString(owner),
+    Address.fromString(witness),
+    data
+  )
+  .toHex()
+  
+  let order = Order.load(orderId)
+  if (order != null) {
+    log.debug("Duplicate Order {}", [orderId])
+    return
+  } else {
+    order = new Order(orderId);
+  }
 
   // Order data
   order.owner = owner;
@@ -195,7 +201,14 @@ export function handleOrderCreationByERC20Transfer(event: Transfer): void {
 }
 
 export function handleETHOrderCreated(event: DepositETH): void {
-  let order = new Order(event.params._key.toHex());
+  let id = event.params._key.toHex()
+  let order = Order.load(id)
+  if (order != null) {
+    log.debug("Duplicate ETH Order {}", [id])
+    return
+  } else {
+    order = new Order(id);
+  }
 
   // Order data
   order.owner = "0x" + event.params._data.toHex().substr(2 + 64 * 2 + 24, 40); /// 1 - 32 bytes
