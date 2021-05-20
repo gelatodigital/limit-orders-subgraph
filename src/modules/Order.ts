@@ -5,6 +5,9 @@ export const EXECUTED = "executed";
 export const CANCELLED = "cancelled";
 
 export function getAddressByNetwork(network: string): Address {
+  if (network == "fantom")
+    return Address.fromString("0x05Ad1094Eb6Cde564d732196F6754Ee464896031");
+
   if (network == "mainnet")
     return Address.fromString("0x36049D479A97CdE1fC6E2a5D2caE30B666Ebf92B");
 
