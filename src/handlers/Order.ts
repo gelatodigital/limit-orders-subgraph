@@ -180,7 +180,7 @@ export function handleOrderCreationByERC20Transfer(event: Transfer): void {
       "0x" +
         event.transaction.input
           .toHexString()
-          .substr(index.plus(BigInt.fromI32(64 * 3 + 24)).toI32(), 64)
+          .substr(index.plus(BigInt.fromI32(64 * 3)).toI32(), 64)
     ).reverse() as Bytes
   );
   order.inputAmount = event.params.value;
