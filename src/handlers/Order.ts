@@ -185,12 +185,11 @@ export function handleOrderCreationByERC20Transfer(event: Transfer): void {
   );
 
   if (event.transaction.input.length > 420)
-    order.handler = Bytes.fromHexString(
+    order.handler =
       "0x" +
-        event.transaction.input
-          .toHexString()
-          .substr(index.plus(BigInt.fromI32(64 * 6)).toI32(), 64)
-    ).toString();
+      event.transaction.input
+        .toHexString()
+        .substr(index.plus(BigInt.fromI32(64 * 4 + 24)).toI32(), 40);
 
   order.inputAmount = event.params.value;
   order.vault = event.params.to.toHex();
@@ -236,9 +235,8 @@ export function handleETHOrderCreated(event: DepositETH): void {
   ); // 8 - 32 bytes
 
   if (event.params._data.length > 288)
-    order.handler = Bytes.fromHexString(
-      "0x" + event.params._data.toHex().substr(2 + 64 * 11, 64)
-    ).toString();
+    order.handler =
+      "0x" + event.params._data.toHex().substr(2 + 64 * 9 + 24, 40);
 
   order.inputAmount = event.params._amount;
   order.vault = getAddressByNetwork(dataSource.network()).toHexString();
