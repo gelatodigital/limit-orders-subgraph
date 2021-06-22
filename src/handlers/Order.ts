@@ -113,11 +113,14 @@ export function handleOrderCreationByERC20Transfer(event: Transfer): void {
     event.transaction.input
       .toHexString()
       .substr(index.minus(BigInt.fromI32(64 * 2 - 24)).toI32(), 40);
+
+  let hasHandlerEncoded = event.transaction.input.length > 420 ? true : false
+
   let data = Bytes.fromHexString(
     "0x" +
       event.transaction.input
         .toHexString()
-        .substr(index.plus(BigInt.fromI32(64 * 2)).toI32(), 64 * 2)
+        .substr(index.plus(BigInt.fromI32(64 * 2)).toI32(), hasHandlerEncoded ? 64 * 3 : 64 * 2)
   ) as Bytes;
 
   let gelatoPineCore = GelatoPineCore.bind(
@@ -186,7 +189,7 @@ export function handleOrderCreationByERC20Transfer(event: Transfer): void {
     ).reverse() as Bytes
   );
 
-  if (event.transaction.input.length > 420)
+  if (hasHandlerEncoded)
     order.handler =
       "0x" +
       event.transaction.input
@@ -236,14 +239,17 @@ export function handleETHOrderCreated(event: DepositETH): void {
     ).reverse() as Bytes
   ); // 8 - 32 bytes
 
-  if (event.params._data.length > 288)
+
+  let hasHandlerEncoded = event.params._data.length > 288 ? true : false
+
+  if (hasHandlerEncoded)
     order.handler =
       "0x" + event.params._data.toHex().substr(2 + 64 * 9 + 24, 40);
 
   order.inputAmount = event.params._amount;
   order.vault = getAddressByNetwork(dataSource.network()).toHexString();
   order.data = Bytes.fromHexString(
-    "0x" + event.params._data.toHex().substr(2 + 64 * 7, 64 * 2)
+    "0x" + event.params._data.toHex().substr(2 + 64 * 7, hasHandlerEncoded ? 64 * 3 : 64 * 2)
   ) as Bytes;
   order.status = OPEN;
 
