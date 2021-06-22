@@ -39,6 +39,7 @@ import {
  * 0000000000000000000000000000000000000000000000000000000000000040
  * 000000000000000000000000eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
  * 00000000000000000000000000000000000000000000000004b1e20ebf83c000
+ * 00000000000000000000000x842A8Dea50478814e2bFAFF9E5A27DC0D1FdD37c
  *
  * The important part is 4200696e652e66696e616e6365 which is pine's secret but starts with 420
  * We use that as the index to parse the input data:
@@ -50,6 +51,7 @@ import {
  * - data = 2 * 32 bytes after secret index (64 bytes length)
  * - outputToken =  2 * 32 bytes after secret index
  * - minReturn =  3 * 32 bytes after secret index
+ * - handler =  4 * 32 bytes after secret index (optional)
  *
  * @param event
  */
