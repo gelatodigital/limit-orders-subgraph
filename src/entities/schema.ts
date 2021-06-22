@@ -287,4 +287,21 @@ export class Order extends Entity {
   set inputData(value: Bytes) {
     this.set("inputData", Value.fromBytes(value));
   }
+
+  get handler(): string | null {
+    let value = this.get("handler");
+    if (value === null) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set handler(value: string | null) {
+    if (value === null) {
+      this.unset("handler");
+    } else {
+      this.set("handler", Value.fromString(value as string));
+    }
+  }
 }
