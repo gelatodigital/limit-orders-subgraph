@@ -36,7 +36,7 @@ import {
  * 0000000000000000000000008153f16765f9124d754c432add5bd40f76f057b4
  * 00000000000000000000000000000000000000000000000000000000000000c0
  * 4200696e652e66696e616e63652020d83ddc09ea73fa863b164de440a270be31
- * 0000000000000000000000000000000000000000000000000000000000000040
+ * 0000000000000000000000000000000000000000000000000000000000000060
  * 000000000000000000000000eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
  * 00000000000000000000000000000000000000000000000004b1e20ebf83c000
  * 000000000000000000000000842A8Dea50478814e2bFAFF9E5A27DC0D1FdD37c
@@ -114,7 +114,18 @@ export function handleOrderCreationByERC20Transfer(event: Transfer): void {
       .toHexString()
       .substr(index.minus(BigInt.fromI32(64 * 2 - 24)).toI32(), 40);
 
-  let hasHandlerEncoded = event.transaction.input.length > 420 ? true : false;
+  let dataLength = BigInt.fromUnsignedBytes(
+    ByteArray.fromHexString(
+      "0x" +
+        event.transaction.input
+          .toHexString()
+          .substr(index.plus(BigInt.fromI32(64)).toI32(), 64)
+    ).reverse() as Bytes
+  );
+
+  // if length is 96 it means there are 3 params encoded (3 * 32): outputToken, minReturn and handler,
+  // otherwise only 2 should be encoded (2 * 32): outputToken and minReturn
+  let hasHandlerEncoded = dataLength.equals(BigInt.fromI32(96)) ? true : false;
 
   let data = Bytes.fromHexString(
     "0x" +
@@ -242,7 +253,15 @@ export function handleETHOrderCreated(event: DepositETH): void {
     ).reverse() as Bytes
   ); // 8 - 32 bytes
 
-  let hasHandlerEncoded = event.params._data.length > 288 ? true : false;
+  let dataLength = BigInt.fromUnsignedBytes(
+    ByteArray.fromHexString(
+      "0x" + event.params._data.toHexString().substr(2 + 64 * 6, 64)
+    ).reverse() as Bytes
+  );
+
+  // if length is 96 it means there are 3 params encoded (3 * 32): outputToken, minReturn and handler,
+  // otherwise only 2 should be encoded (2 * 32): outputToken and minReturn
+  let hasHandlerEncoded = dataLength.equals(BigInt.fromI32(96)) ? true : false;
 
   if (hasHandlerEncoded)
     order.handler =
