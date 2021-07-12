@@ -7,6 +7,7 @@ import {
   log
 } from "@graphprotocol/graph-ts";
 import { Transfer } from "../entities/ERC20/ERC20";
+import { DepositToken } from "../entities/ERC20OrderRouter/ERC20OrderRouter";
 import {
   DepositETH,
   GelatoPineCore,
@@ -17,7 +18,7 @@ import { Order } from "../entities/schema";
 import {
   CANCELLED,
   EXECUTED,
-  getAddressByNetwork,
+  getGelatoPineCoreAddressByNetwork,
   OPEN
 } from "../modules/Order";
 
@@ -138,7 +139,7 @@ export function handleOrderCreationByERC20Transfer(event: Transfer): void {
   ) as Bytes;
 
   let gelatoPineCore = GelatoPineCore.bind(
-    getAddressByNetwork(dataSource.network())
+    getGelatoPineCoreAddressByNetwork(dataSource.network())
   );
 
   if (doMultipleCheck2) {
@@ -227,6 +228,69 @@ export function handleOrderCreationByERC20Transfer(event: Transfer): void {
   order.save();
 }
 
+export function handleDepositToken(event: DepositToken): void {
+  let id = event.params.key.toHex();
+  let order = Order.load(id);
+  if (order != null) {
+    log.debug("Duplicate ETH Order {}", [id]);
+    return;
+  } else {
+    order = new Order(id);
+  }
+
+  // Order data
+  order.owner = event.params.owner.toString();
+  order.module = event.params.module.toString();
+  order.inputToken = event.params.inputToken.toString();
+  order.witness = event.params.witness.toString();
+  order.secret = event.params.secret.toString();
+  order.outputToken =
+    "0x" + event.params.data.toHex().substr(2 + 64 * 7 + 24, 40); // 7 - 20 bytes
+
+  order.minReturn = BigInt.fromUnsignedBytes(
+    ByteArray.fromHexString(
+      "0x" + event.params.data.toHex().substr(2 + 64 * 8, 64)
+    ).reverse() as Bytes
+  ); // 8 - 32 bytes
+
+  let dataLength = BigInt.fromUnsignedBytes(
+    ByteArray.fromHexString(
+      "0x" + event.params.data.toHexString().substr(2 + 64 * 6, 64)
+    ).reverse() as Bytes
+  );
+
+  // if length is 96 it means there are 3 params encoded (3 * 32): outputToken, minReturn and handler,
+  // otherwise only 2 should be encoded (2 * 32): outputToken and minReturn
+  let hasHandlerEncoded = dataLength.equals(BigInt.fromI32(96)) ? true : false;
+
+  if (hasHandlerEncoded)
+    order.handler =
+      "0x" + event.params.data.toHex().substr(2 + 64 * 9 + 24, 40);
+
+  order.inputAmount = event.params.amount;
+  order.vault = getGelatoPineCoreAddressByNetwork(
+    dataSource.network()
+  ).toHexString();
+  order.data = Bytes.fromHexString(
+    "0x" +
+      event.params.data
+        .toHex()
+        .substr(2 + 64 * 7, hasHandlerEncoded ? 64 * 3 : 64 * 2)
+  ) as Bytes;
+  order.status = OPEN;
+
+  // Tx data
+  order.inputData = event.transaction.input;
+  order.createdTxHash = event.transaction.hash;
+  order.blockNumber = event.block.number;
+  order.createdAt = event.block.timestamp;
+  order.updatedAt = event.block.timestamp;
+  order.updatedAtBlock = event.block.number;
+  order.updatedAtBlockHash = event.block.hash.toHexString();
+
+  order.save();
+}
+
 export function handleETHOrderCreated(event: DepositETH): void {
   let id = event.params._key.toHex();
   let order = Order.load(id);
@@ -268,7 +332,9 @@ export function handleETHOrderCreated(event: DepositETH): void {
       "0x" + event.params._data.toHex().substr(2 + 64 * 9 + 24, 40);
 
   order.inputAmount = event.params._amount;
-  order.vault = getAddressByNetwork(dataSource.network()).toHexString();
+  order.vault = getGelatoPineCoreAddressByNetwork(
+    dataSource.network()
+  ).toHexString();
   order.data = Bytes.fromHexString(
     "0x" +
       event.params._data

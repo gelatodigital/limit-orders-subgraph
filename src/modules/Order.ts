@@ -4,7 +4,7 @@ export const OPEN = "open";
 export const EXECUTED = "executed";
 export const CANCELLED = "cancelled";
 
-export function getAddressByNetwork(network: string): Address {
+export function getGelatoPineCoreAddressByNetwork(network: string): Address {
   if (network == "fantom")
     return Address.fromString("0x05Ad1094Eb6Cde564d732196F6754Ee464896031");
 
