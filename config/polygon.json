@@ -1,6 +1,6 @@
 {
   "network": "matic",
   "gelatoPineCoreAddress": "0x38c4092b28dAB7F3d98eE6524549571c283cdfA5",
-  "erc20OrderRouterAddress": "",
-  "startBlock": 14254670
+  "erc20OrderRouterAddress": "0x0c2c2963a4353ffd839590f7cb1e783688378814",
+  "startBlock": 16816959
 }
