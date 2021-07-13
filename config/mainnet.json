@@ -1,5 +1,6 @@
 {
   "network": "mainnet",
-  "address": "0x36049D479A97CdE1fC6E2a5D2caE30B666Ebf92B",
-  "startBlock": 12213148
+  "gelatoPineCoreAddress": "0x36049D479A97CdE1fC6E2a5D2caE30B666Ebf92B",
+  "erc20OrderRouterAddress": "0x5fb00386558ccc219e51b69d8e963ef20b0c267a",
+  "startBlock": 12818753
 }

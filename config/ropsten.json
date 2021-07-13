@@ -1,5 +1,6 @@
 {
   "network": "ropsten",
-  "address": "0x0e5096D201Fe2985f5C26432A76f145D6e5D1453",
-  "startBlock": 9998190
+  "gelatoPineCoreAddress": "0x0e5096D201Fe2985f5C26432A76f145D6e5D1453",
+  "erc20OrderRouterAddress": "0x9c06FF386779cC2269d482bceCF2378a4fF5cB90",
+  "startBlock": 10627726
 }

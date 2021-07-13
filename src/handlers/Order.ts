@@ -6,7 +6,7 @@ import {
   dataSource,
   log
 } from "@graphprotocol/graph-ts";
-import { Transfer } from "../entities/ERC20/ERC20";
+import { DepositToken } from "../entities/ERC20OrderRouter/ERC20OrderRouter";
 import {
   DepositETH,
   GelatoPineCore,
@@ -17,13 +17,13 @@ import { Order } from "../entities/schema";
 import {
   CANCELLED,
   EXECUTED,
-  getAddressByNetwork,
+  getGelatoPineCoreAddressByNetwork,
   OPEN
 } from "../modules/Order";
 
 /**
- * @dev ERC20 transfer should have an extra data we use to identify a pine order.
- * A transfer with a pine order looks like:
+ * @dev ERC20 transfer should have an extra data we use to identify a order.
+ * A transfer with a order looks like:
  *
  * 0xa9059cbb
  * 000000000000000000000000c8b6046580622eb6037d5ef2ca74faf63dc93631
@@ -35,91 +35,56 @@ import {
  * 0000000000000000000000005523f2fc0889a6d46ae686bcd8daa9658cf56496
  * 0000000000000000000000008153f16765f9124d754c432add5bd40f76f057b4
  * 00000000000000000000000000000000000000000000000000000000000000c0
- * 4200696e652e66696e616e63652020d83ddc09ea73fa863b164de440a270be31
+ * 67656c61746f6e6574776f726b2020d83ddc09ea73fa863b164de440a270be31
  * 0000000000000000000000000000000000000000000000000000000000000060
  * 000000000000000000000000eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
  * 00000000000000000000000000000000000000000000000004b1e20ebf83c000
  * 000000000000000000000000842A8Dea50478814e2bFAFF9E5A27DC0D1FdD37c
  *
- * The important part is 4200696e652e66696e616e6365 which is pine's secret but starts with 420
+ * The important part is 67656c61746f6e6574776f726b which is gelato's secret (gelatonetwork in hex)
  * We use that as the index to parse the input data:
  * - module = 5 * 32 bytes before secret index
  * - inputToken = ERC20 which emits the Transfer event
  * - owner = `from` parameter of the Transfer event
  * - witness = 2 * 32 bytes before secret index
  * - secret = 32 bytes from the secret index
- * - data = 2 * 32 bytes after secret index (64 bytes length)
- * - outputToken =  2 * 32 bytes after secret index
- * - minReturn =  3 * 32 bytes after secret index
- * - handler =  4 * 32 bytes after secret index (optional)
+ * - data = 2 * 32 bytes after secret index (64 or 96 bytes length). Contains:
+ *   - outputToken =  2 * 32 bytes after secret index
+ *   - minReturn =  3 * 32 bytes after secret index
+ *   - handler =  4 * 32 bytes after secret index (optional)
  *
- * @param event
  */
-export function handleOrderCreationByERC20Transfer(event: Transfer): void {
-  let index_ = event.transaction.input
-    .toHexString()
-    .indexOf("4200696e652e66696e616e6365");
-  if (index_ == -1) {
+
+export function handleDepositToken(event: DepositToken): void {
+  let id = event.params.key.toHex();
+  let order = Order.load(id);
+  if (order != null) {
+    log.debug("Duplicate Token Order {}", [id]);
     return;
+  } else {
+    order = new Order(id);
   }
 
-  let doMultipleCheck2 = false;
-  let recipient =
-    "0x" +
-    event.transaction.input
-      .toHexString()
-      .substr(BigInt.fromI32(10 + 24).toI32(), 40);
+  // Order data
+  order.owner = event.params.owner.toHexString();
 
-  // Skip multiple transfer events
-  if (recipient != event.params.to.toHexString()) {
-    doMultipleCheck2 = true;
-  }
+  order.module = event.params.module.toHexString();
+  order.inputToken = event.params.inputToken.toHexString();
+  order.witness = event.params.witness.toHexString();
+  order.secret = event.params.secret.toHex();
 
-  let index = BigInt.fromI32(index_);
+  order.outputToken = "0x" + event.params.data.toHex().substr(2 + 24, 40); // 7 - 20 bytes
 
-  // Transaction input should be bigger than index + (64 * 4)
-  // Index should be bigger than (64 * 5)
-  if (
-    !(
-      index.minus(BigInt.fromI32(64 * 5)).gt(BigInt.fromI32(0)) &&
-      BigInt.fromI32(event.transaction.input.toHexString().length).ge(
-        index.plus(BigInt.fromI32(64 * 4 - 1))
-      )
-    )
-  ) {
-    log.debug("Error creating an order from an ERC20 transfer: {}", [
-      event.transaction.hash.toHexString()
-    ]);
-    return;
-  }
-
-  let module =
-    "0x" +
-    event.transaction.input
-      .toHexString()
-      .substr(index.minus(BigInt.fromI32(64 * 5 - 24)).toI32(), 40);
-  let inputToken =
-    "0x" +
-    event.transaction.input
-      .toHexString()
-      .substr(index.minus(BigInt.fromI32(64 * 4 - 24)).toI32(), 40);
-  let owner =
-    "0x" +
-    event.transaction.input
-      .toHexString()
-      .substr(index.minus(BigInt.fromI32(64 * 3 - 24)).toI32(), 40);
-  let witness =
-    "0x" +
-    event.transaction.input
-      .toHexString()
-      .substr(index.minus(BigInt.fromI32(64 * 2 - 24)).toI32(), 40);
+  order.minReturn = BigInt.fromUnsignedBytes(
+    ByteArray.fromHexString(
+      "0x" + event.params.data.toHex().substr(2 + 64, 64)
+    ).reverse() as Bytes
+  ); // 8 - 32 bytes
 
   let dataLength = BigInt.fromUnsignedBytes(
     ByteArray.fromHexString(
-      "0x" +
-        event.transaction.input
-          .toHexString()
-          .substr(index.plus(BigInt.fromI32(64)).toI32(), 64)
+      // 10 (to remove method sig 0x486046a8) + 64 * 7 (7th field we are looking for)
+      "0x" + event.transaction.input.toHexString().substr(10 + 64 * 7, 64)
     ).reverse() as Bytes
   );
 
@@ -127,92 +92,29 @@ export function handleOrderCreationByERC20Transfer(event: Transfer): void {
   // otherwise only 2 should be encoded (2 * 32): outputToken and minReturn
   let hasHandlerEncoded = dataLength.equals(BigInt.fromI32(96)) ? true : false;
 
-  let data = Bytes.fromHexString(
-    "0x" +
-      event.transaction.input
-        .toHexString()
-        .substr(
-          index.plus(BigInt.fromI32(64 * 2)).toI32(),
-          hasHandlerEncoded ? 64 * 3 : 64 * 2
-        )
-  ) as Bytes;
-
-  let gelatoPineCore = GelatoPineCore.bind(
-    getAddressByNetwork(dataSource.network())
-  );
-
-  if (doMultipleCheck2) {
-    let vaultOfOrder = gelatoPineCore.vaultOfOrder(
-      Address.fromString(module),
-      Address.fromString(inputToken),
-      Address.fromString(owner),
-      Address.fromString(witness),
-      data
-    );
-
-    // Skip multiple transfer events ^2
-    if (vaultOfOrder.toHexString() != event.params.to.toHexString()) {
-      log.debug(
-        "Skip Check 2: Skipped Transfer vaultOfOrder expected {}, but receive {}. On Tx {}",
-        [
-          vaultOfOrder.toHexString(),
-          event.params.to.toHexString(),
-          event.transaction.hash.toHexString()
-        ]
-      );
-      return;
-    }
-  }
-
-  let orderId = gelatoPineCore
-    .keyOf(
-      Address.fromString(module),
-      Address.fromString(inputToken),
-      Address.fromString(owner),
-      Address.fromString(witness),
-      data
-    )
-    .toHex();
-
-  let order = Order.load(orderId);
-  if (order != null) {
-    log.debug("Duplicate Order {}", [orderId]);
-    return;
-  } else {
-    order = new Order(orderId);
-  }
-
-  // Order data
-  order.owner = owner;
-  order.module = module;
-  order.inputToken = inputToken;
-  order.witness = witness;
-  order.secret =
-    "0x" + event.transaction.input.toHexString().substr(index.toI32(), 64);
-  order.outputToken =
-    "0x" +
-    event.transaction.input
-      .toHexString()
-      .substr(index.plus(BigInt.fromI32(64 * 2 + 24)).toI32(), 40);
-  order.minReturn = BigInt.fromUnsignedBytes(
-    ByteArray.fromHexString(
-      "0x" +
-        event.transaction.input
-          .toHexString()
-          .substr(index.plus(BigInt.fromI32(64 * 3)).toI32(), 64)
-    ).reverse() as Bytes
-  );
-
   if (hasHandlerEncoded)
     order.handler =
-      "0x" +
-      event.transaction.input
-        .toHexString()
-        .substr(index.plus(BigInt.fromI32(64 * 4 + 24)).toI32(), 40);
+      "0x" + event.params.data.toHex().substr(2 + 64 * 2 + 24, 40);
 
-  order.inputAmount = event.params.value;
-  order.vault = event.params.to.toHex();
-  order.data = data;
+  order.inputAmount = event.params.amount;
+
+  order.data = event.params.data;
+
+  let gelatoPineCore = GelatoPineCore.bind(
+    getGelatoPineCoreAddressByNetwork(dataSource.network())
+  );
+  let vaultResponse = gelatoPineCore.try_vaultOfOrder(
+    Address.fromString(order.module),
+    Address.fromString(order.inputToken),
+    Address.fromString(order.owner),
+    Address.fromString(order.witness),
+    order.data
+  );
+
+  order.vault = vaultResponse.reverted
+    ? null
+    : vaultResponse.value.toHexString();
+
   order.status = OPEN;
 
   // Tx data
@@ -268,7 +170,10 @@ export function handleETHOrderCreated(event: DepositETH): void {
       "0x" + event.params._data.toHex().substr(2 + 64 * 9 + 24, 40);
 
   order.inputAmount = event.params._amount;
-  order.vault = getAddressByNetwork(dataSource.network()).toHexString();
+
+  order.vault = getGelatoPineCoreAddressByNetwork(
+    dataSource.network()
+  ).toHexString();
   order.data = Bytes.fromHexString(
     "0x" +
       event.params._data
