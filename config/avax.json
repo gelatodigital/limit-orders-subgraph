@@ -1,0 +1,6 @@
+{
+  "network": "avax",
+  "gelatoPineCoreAddress": "0x0c30D3d66bc7C73A83fdA929888c34dcb24FD599",
+  "erc20OrderRouterAddress": "0x64c7f3c2C19B41a6aD67bb5f4edc8EdbB3284F34",
+  "startBlock": 6266159
+}
