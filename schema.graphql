@@ -3,6 +3,7 @@ type Order @entity {
   owner: String!
   inputToken: String!
   outputToken: String!
+  maxReturn: BigInt
   minReturn: BigInt
   module: String
   witness: String!
