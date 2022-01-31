@@ -175,7 +175,12 @@ export function handleETHOrderCreated(event: DepositETH): void {
   // otherwise only 2 should be encoded (2 * 32): outputToken and minReturn
   let hasHandlerEncoded = dataLength.equals(BigInt.fromI32(96)) ? true : false;
 
+
   let isStopLimitOrder = dataLength.equals(BigInt.fromI32(128)) ? true : false;
+
+  if (isStopLimitOrder) {
+    hasHandlerEncoded = true
+  }
 
   if (hasHandlerEncoded)
     order.handler =
@@ -197,8 +202,7 @@ export function handleETHOrderCreated(event: DepositETH): void {
         "0x" + event.params._data.toHex().substr(2 + 64 * 10, 64)
       ).reverse() as Bytes
     ); // 8 - 32 bytes
-  }
-  else {
+  } else {
     order.data = Bytes.fromHexString(
       "0x" +
       event.params._data
