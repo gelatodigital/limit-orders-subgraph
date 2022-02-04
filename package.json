@@ -11,8 +11,6 @@
     "deploy:fantom": "yarn prepare:fantom && graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ gelatodigital/limit-orders-fantom-ii",
     "deploy:mainnet": "yarn prepare:mainnet && graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ gelatodigital/limit-orders-ii",
     "deploy:polygon": "yarn prepare:polygon && graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ gelatodigital/limit-orders-polygon-ii",
-    "deploy:stoploss:staging:polygon": "yarn prepare:polygon && graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ harrytgerman/stoplimitorder",
-    "deploy:stoploss:staging:ropsten": "yarn prepare:ropsten && graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ harrytgerman/ropstenstoplimit",
     "deploy:ropsten": "yarn prepare:ropsten && graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ gelatodigital/limit-orders-ropsten",
     "postinstall": "yarn husky install",
     "prepare:bsc": "mustache config/bsc.json subgraph.template.yaml > subgraph.yaml",
