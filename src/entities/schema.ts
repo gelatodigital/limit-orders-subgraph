@@ -69,6 +69,23 @@ export class Order extends Entity {
     this.set("outputToken", Value.fromString(value));
   }
 
+  get maxReturn(): BigInt | null {
+    let value = this.get("maxReturn");
+    if (value === null) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set maxReturn(value: BigInt | null) {
+    if (value === null) {
+      this.unset("maxReturn");
+    } else {
+      this.set("maxReturn", Value.fromBigInt(value as BigInt));
+    }
+  }
+
   get minReturn(): BigInt | null {
     let value = this.get("minReturn");
     if (value === null) {

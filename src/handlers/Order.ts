@@ -92,9 +92,23 @@ export function handleDepositToken(event: DepositToken): void {
   // otherwise only 2 should be encoded (2 * 32): outputToken and minReturn
   let hasHandlerEncoded = dataLength.equals(BigInt.fromI32(96)) ? true : false;
 
+  let isStopLimitOrder = dataLength.equals(BigInt.fromI32(128)) ? true : false;
+
+  if (isStopLimitOrder) {
+    hasHandlerEncoded = true;
+  }
+
   if (hasHandlerEncoded)
     order.handler =
       "0x" + event.params.data.toHex().substr(2 + 64 * 2 + 24, 40);
+
+  if (isStopLimitOrder) {
+    order.maxReturn = BigInt.fromUnsignedBytes(
+      ByteArray.fromHexString(
+        "0x" + event.params.data.toHex().substr(2 + 64 * 2 + 40, 64)
+      ).reverse() as Bytes
+    ); // 8 - 32 bytes
+  }
 
   order.inputAmount = event.params.amount;
 
@@ -165,6 +179,12 @@ export function handleETHOrderCreated(event: DepositETH): void {
   // otherwise only 2 should be encoded (2 * 32): outputToken and minReturn
   let hasHandlerEncoded = dataLength.equals(BigInt.fromI32(96)) ? true : false;
 
+  let isStopLimitOrder = dataLength.equals(BigInt.fromI32(128)) ? true : false;
+
+  if (isStopLimitOrder) {
+    hasHandlerEncoded = true;
+  }
+
   if (hasHandlerEncoded)
     order.handler =
       "0x" + event.params._data.toHex().substr(2 + 64 * 9 + 24, 40);
@@ -174,12 +194,26 @@ export function handleETHOrderCreated(event: DepositETH): void {
   order.vault = getGelatoPineCoreAddressByNetwork(
     dataSource.network()
   ).toHexString();
-  order.data = Bytes.fromHexString(
-    "0x" +
-      event.params._data
-        .toHex()
-        .substr(2 + 64 * 7, hasHandlerEncoded ? 64 * 3 : 64 * 2)
-  ) as Bytes;
+
+  if (isStopLimitOrder) {
+    order.data = Bytes.fromHexString(
+      "0x" + event.params._data.toHex().substr(2 + 64 * 7, 64 * 4)
+    ) as Bytes;
+
+    order.maxReturn = BigInt.fromUnsignedBytes(
+      ByteArray.fromHexString(
+        "0x" + event.params._data.toHex().substr(2 + 64 * 10, 64)
+      ).reverse() as Bytes
+    ); // 8 - 32 bytes
+  } else {
+    order.data = Bytes.fromHexString(
+      "0x" +
+        event.params._data
+          .toHex()
+          .substr(2 + 64 * 7, hasHandlerEncoded ? 64 * 3 : 64 * 2)
+    ) as Bytes;
+  }
+
   order.status = OPEN;
 
   // Tx data
