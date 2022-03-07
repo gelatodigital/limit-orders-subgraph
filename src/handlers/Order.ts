@@ -208,9 +208,9 @@ export function handleETHOrderCreated(event: DepositETH): void {
   } else {
     order.data = Bytes.fromHexString(
       "0x" +
-      event.params._data
-        .toHex()
-        .substr(2 + 64 * 7, hasHandlerEncoded ? 64 * 3 : 64 * 2)
+        event.params._data
+          .toHex()
+          .substr(2 + 64 * 7, hasHandlerEncoded ? 64 * 3 : 64 * 2)
     ) as Bytes;
   }
 

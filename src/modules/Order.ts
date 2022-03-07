@@ -5,7 +5,7 @@ export const EXECUTED = "executed";
 export const CANCELLED = "cancelled";
 
 export function getGelatoPineCoreAddressByNetwork(network: string): Address {
-  if (network == "avax")
+  if (network == "avalanche")
     return Address.fromString("0x0c30D3d66bc7C73A83fdA929888c34dcb24FD599");
 
   if (network == "bsc")
