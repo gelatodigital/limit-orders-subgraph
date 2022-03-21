@@ -5,29 +5,6 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum/contract
-    name: ERC20OrderRouterOld
-    network: {{network}}
-    source:
-      abi: ERC20OrderRouter
-      startBlock: {{startBlock}}
-      address: "{{erc20OrderRouterOldAddress}}"
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.3
-      language: wasm/assemblyscript
-      entities:
-        - Order
-      abis:
-        - name: ERC20OrderRouter
-          file: ./abis/ERC20OrderRouter.json
-        - name: GelatoPineCore
-          file: ./abis/GelatoPineCore.json
-      eventHandlers:
-        - event: DepositToken(indexed bytes32,indexed address,uint256,address,address,indexed address,address,bytes,bytes32)
-          handler: handleDepositToken
-      file: ./src/handlers/Order.ts
-
-  - kind: ethereum/contract
     name: ERC20OrderRouter
     network: {{network}}
     source:
@@ -49,6 +26,31 @@ dataSources:
         - event: DepositToken(indexed bytes32,indexed address,uint256,address,address,indexed address,address,bytes,bytes32)
           handler: handleDepositToken
       file: ./src/handlers/Order.ts
+
+  {{#erc20OrderRouterOldAddress}}
+  - kind: ethereum/contract
+    name: ERC20OrderRouterOld
+    network: {{network}}
+    source:
+      abi: ERC20OrderRouter
+      startBlock: {{startBlock}}
+      address: "{{erc20OrderRouterOldAddress}}"
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.3
+      language: wasm/assemblyscript
+      entities:
+        - Order
+      abis:
+        - name: ERC20OrderRouter
+          file: ./abis/ERC20OrderRouter.json
+        - name: GelatoPineCore
+          file: ./abis/GelatoPineCore.json
+      eventHandlers:
+        - event: DepositToken(indexed bytes32,indexed address,uint256,address,address,indexed address,address,bytes,bytes32)
+          handler: handleDepositToken
+      file: ./src/handlers/Order.ts
+  {{/erc20OrderRouterOldAddress}}
 
   - kind: ethereum/contract
     name: GelatoPineCore
