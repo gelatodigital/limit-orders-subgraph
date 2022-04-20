@@ -31,3 +31,30 @@ enum OrderStatus @entity {
   executed
   cancelled
 }
+
+type OrderV2 @entity {
+  id: ID!
+  orderHash: String!
+  owner: String!
+  inputToken: String!
+  outputToken: String!
+  maxReturn: BigInt
+  minReturn: BigInt
+  module: String
+  inputAmount: BigInt!
+  salt: BigInt!
+  bought: BigInt
+  auxData: Bytes
+  status: OrderStatus!
+  createdTxHash: Bytes!
+  executedTxHash: Bytes
+  cancelledTxHash: Bytes
+  blockNumber: BigInt!
+  createdAt: BigInt!
+  updatedAt: BigInt!
+  updatedAtBlock: BigInt!
+  updatedAtBlockHash: String!
+  data: Bytes!
+  inputData: Bytes!
+  handler: String
+}

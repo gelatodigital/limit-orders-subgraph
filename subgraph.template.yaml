@@ -13,7 +13,7 @@ dataSources:
       address: "{{erc20OrderRouterAddress}}"
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.3
+      apiVersion: 0.0.5
       language: wasm/assemblyscript
       entities:
         - Order
@@ -36,7 +36,7 @@ dataSources:
       address: "{{gelatoPineCoreAddress}}"
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.3
+      apiVersion: 0.0.5
       language: wasm/assemblyscript
       entities:
         - Order
@@ -51,6 +51,31 @@ dataSources:
         - event: OrderCancelled(indexed bytes32,address,address,address,bytes,uint256)
           handler: handleOrderCancelled
       file: ./src/handlers/Order.ts
+    
+  - kind: ethereum/contract
+    name: GelatoOrdersVault
+    network: {{network}}
+    source:
+      abi: GelatoOrdersVault
+      startBlock: {{startBlock}}
+      address: "{{gelatoOrdersVaultAddress}}"
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - OrderV2
+      abis:
+        - name: GelatoOrdersVault
+          file: ./abis/GelatoOrdersVault.json
+      eventHandlers:
+        - event: LogDeposit(indexed bytes32,(address,address,address,address,address,uint256,uint256,uint256,bytes),uint256)
+          handler: handleOrderDeposited
+        - event: LogFill(indexed bytes32,indexed address,uint256,bytes)
+          handler: handleOrderFilled
+        - event: LogCancelled(indexed bytes32,indexed address,uint256)
+          handler: handleOrderCancelled
+      file: ./src/handlers/GelatoOrdersVault.ts
       
   {{#erc20OrderRouterOldAddress}}
   - kind: ethereum/contract
@@ -62,7 +87,7 @@ dataSources:
       address: "{{erc20OrderRouterOldAddress}}"
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.3
+      apiVersion: 0.0.5
       language: wasm/assemblyscript
       entities:
         - Order

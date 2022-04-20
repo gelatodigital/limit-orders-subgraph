@@ -22,8 +22,8 @@
     "prepare:ropsten": "mustache config/ropsten.json subgraph.template.yaml > subgraph.yaml"
   },
   "devDependencies": {
-    "@graphprotocol/graph-cli": "0.16.0",
-    "@graphprotocol/graph-ts": "0.16.0",
+    "@graphprotocol/graph-cli": "0.26.0",
+    "@graphprotocol/graph-ts": "0.24.1",
     "husky": "7.0.1",
     "mustache": "4.2.0",
     "typescript": "4.3.5"

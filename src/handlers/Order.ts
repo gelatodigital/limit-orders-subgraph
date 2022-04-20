@@ -117,17 +117,19 @@ export function handleDepositToken(event: DepositToken): void {
   let gelatoPineCore = GelatoPineCore.bind(
     getGelatoPineCoreAddressByNetwork(dataSource.network())
   );
-  let vaultResponse = gelatoPineCore.try_vaultOfOrder(
-    Address.fromString(order.module),
-    Address.fromString(order.inputToken),
-    Address.fromString(order.owner),
-    Address.fromString(order.witness),
-    order.data
-  );
+  if (order.module) {
+    let vaultResponse = gelatoPineCore.try_vaultOfOrder(
+      Address.fromString(order.module!),
+      Address.fromString(order.inputToken),
+      Address.fromString(order.owner),
+      Address.fromString(order.witness),
+      order.data
+    );
 
-  order.vault = vaultResponse.reverted
-    ? null
-    : vaultResponse.value.toHexString();
+    order.vault = vaultResponse.reverted
+      ? ""
+      : vaultResponse.value.toHexString();
+  }
 
   order.status = OPEN;
 
@@ -256,16 +258,18 @@ export function handleOrderCancelled(event: OrderCancelled): void {
   // Sometimes by running out of gas the tx is partially completed
   // check: https://etherscan.io/tx/0x29da2e620e5f8606d74a9b73c353a8f393acc9cd58c1750dd2edd05cf33a5d1c
   let gelatoPineCore = GelatoPineCore.bind(event.address);
-  let res = gelatoPineCore.try_existOrder(
-    Address.fromString(order.module),
-    Address.fromString(order.inputToken),
-    Address.fromString(order.owner),
-    Address.fromString(order.witness),
-    order.data
-  );
+  if (order.module) {
+    let res = gelatoPineCore.try_existOrder(
+      Address.fromString(order.module!),
+      Address.fromString(order.inputToken),
+      Address.fromString(order.owner),
+      Address.fromString(order.witness),
+      order.data
+    );
 
-  if (res.reverted || res.value) {
-    return;
+    if (res.reverted || res.value) {
+      return;
+    }
   }
 
   order.cancelledTxHash = event.transaction.hash;
