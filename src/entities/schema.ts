@@ -341,135 +341,6 @@ export class Order extends Entity {
   }
 }
 
-export class LogDepositOrderStruct extends Entity {
-  constructor(id: string) {
-    super();
-    this.set("id", Value.fromString(id));
-
-    this.set("owner", Value.fromString(""));
-    this.set("inputToken", Value.fromString(""));
-    this.set("outputToken", Value.fromString(""));
-    this.set("module", Value.fromString(""));
-    this.set("handler", Value.fromString(""));
-    this.set("amountIn", Value.fromBigInt(BigInt.zero()));
-    this.set("minReturn", Value.fromBigInt(BigInt.zero()));
-    this.set("salt", Value.fromBigInt(BigInt.zero()));
-    this.set("data", Value.fromBytes(Bytes.empty()));
-  }
-
-  save(): void {
-    let id = this.get("id");
-    assert(
-      id != null,
-      "Cannot save LogDepositOrderStruct entity without an ID"
-    );
-    if (id) {
-      assert(
-        id.kind == ValueKind.STRING,
-        "Cannot save LogDepositOrderStruct entity with non-string ID. " +
-          'Considering using .toHex() to convert the "id" to a string.'
-      );
-      store.set("LogDepositOrderStruct", id.toString(), this);
-    }
-  }
-
-  static load(id: string): LogDepositOrderStruct | null {
-    return changetype<LogDepositOrderStruct | null>(
-      store.get("LogDepositOrderStruct", id)
-    );
-  }
-
-  get id(): string {
-    let value = this.get("id");
-    return value!.toString();
-  }
-
-  set id(value: string) {
-    this.set("id", Value.fromString(value));
-  }
-
-  get owner(): string {
-    let value = this.get("owner");
-    return value!.toString();
-  }
-
-  set owner(value: string) {
-    this.set("owner", Value.fromString(value));
-  }
-
-  get inputToken(): string {
-    let value = this.get("inputToken");
-    return value!.toString();
-  }
-
-  set inputToken(value: string) {
-    this.set("inputToken", Value.fromString(value));
-  }
-
-  get outputToken(): string {
-    let value = this.get("outputToken");
-    return value!.toString();
-  }
-
-  set outputToken(value: string) {
-    this.set("outputToken", Value.fromString(value));
-  }
-
-  get module(): string {
-    let value = this.get("module");
-    return value!.toString();
-  }
-
-  set module(value: string) {
-    this.set("module", Value.fromString(value));
-  }
-
-  get handler(): string {
-    let value = this.get("handler");
-    return value!.toString();
-  }
-
-  set handler(value: string) {
-    this.set("handler", Value.fromString(value));
-  }
-
-  get amountIn(): BigInt {
-    let value = this.get("amountIn");
-    return value!.toBigInt();
-  }
-
-  set amountIn(value: BigInt) {
-    this.set("amountIn", Value.fromBigInt(value));
-  }
-
-  get minReturn(): BigInt {
-    let value = this.get("minReturn");
-    return value!.toBigInt();
-  }
-
-  set minReturn(value: BigInt) {
-    this.set("minReturn", Value.fromBigInt(value));
-  }
-
-  get salt(): BigInt {
-    let value = this.get("salt");
-    return value!.toBigInt();
-  }
-
-  set salt(value: BigInt) {
-    this.set("salt", Value.fromBigInt(value));
-  }
-
-  get data(): Bytes {
-    let value = this.get("data");
-    return value!.toBytes();
-  }
-
-  set data(value: Bytes) {
-    this.set("data", Value.fromBytes(value));
-  }
-}
-
 export class OrderV2 extends Entity {
   constructor(id: string) {
     super();
@@ -479,7 +350,6 @@ export class OrderV2 extends Entity {
     this.set("owner", Value.fromString(""));
     this.set("inputToken", Value.fromString(""));
     this.set("outputToken", Value.fromString(""));
-    this.set("module", Value.fromString(""));
     this.set("inputAmount", Value.fromBigInt(BigInt.zero()));
     this.set("salt", Value.fromBigInt(BigInt.zero()));
     this.set("status", Value.fromString(""));
@@ -589,13 +459,21 @@ export class OrderV2 extends Entity {
     }
   }
 
-  get module(): string {
+  get module(): string | null {
     let value = this.get("module");
-    return value!.toString();
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
   }
 
-  set module(value: string) {
-    this.set("module", Value.fromString(value));
+  set module(value: string | null) {
+    if (!value) {
+      this.unset("module");
+    } else {
+      this.set("module", Value.fromString(<string>value));
+    }
   }
 
   get inputAmount(): BigInt {

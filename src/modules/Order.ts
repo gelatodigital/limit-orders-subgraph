@@ -26,25 +26,19 @@ export function getGelatoPineCoreAddressByNetwork(network: string): Address {
   throw "No Address specified";
 }
 
-
 export function getGelatoOrdersVaultAddressByNetwork(network: string): Address {
-  if (network == "avalanche")
-    return Address.fromString("");
+  if (network == "avalanche") return Address.fromString("");
 
-  if (network == "bsc")
-    return Address.fromString("");
+  if (network == "bsc") return Address.fromString("");
 
-  if (network == "fantom")
-    return Address.fromString("");
+  if (network == "fantom") return Address.fromString("");
 
-  if (network == "mainnet")
-    return Address.fromString("");
+  if (network == "mainnet") return Address.fromString("");
 
   if (network == "matic")
     return Address.fromString("0xDBe356FA623B5E588B8f51F6D7Cf1c39d6162A3C");
 
-  if (network == "ropsten")
-    return Address.fromString("");
+  if (network == "ropsten") return Address.fromString("");
 
   throw "No Address specified";
 }
