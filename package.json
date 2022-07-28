@@ -13,13 +13,15 @@
     "deploy:mainnet": "yarn prepare:mainnet && graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ gelatodigital/limit-orders-ii",
     "deploy:polygon": "yarn prepare:polygon && graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ gelatodigital/limit-orders-polygon-ii",
     "deploy:ropsten": "yarn prepare:ropsten && graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ gelatodigital/limit-orders-ropsten",
+    "deploy:cronos": "yarn prepare:cronos && graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ gelatodigital/limit-orders-cronos",
     "postinstall": "yarn husky install",
     "prepare:avax": "mustache config/avax.json subgraph.template.yaml > subgraph.yaml",
     "prepare:bsc": "mustache config/bsc.json subgraph.template.yaml > subgraph.yaml",
     "prepare:fantom": "mustache config/fantom.json subgraph.template.yaml > subgraph.yaml",
     "prepare:mainnet": "mustache config/mainnet.json subgraph.template.yaml > subgraph.yaml",
     "prepare:polygon": "mustache config/polygon.json subgraph.template.yaml > subgraph.yaml",
-    "prepare:ropsten": "mustache config/ropsten.json subgraph.template.yaml > subgraph.yaml"
+    "prepare:ropsten": "mustache config/ropsten.json subgraph.template.yaml > subgraph.yaml",
+    "prepare:cronos": "mustache config/cronos.json subgraph.template.yaml > subgraph.yaml"
   },
   "devDependencies": {
     "@graphprotocol/graph-cli": "0.16.0",
