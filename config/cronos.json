@@ -1,0 +1,6 @@
+{
+  "network": "cronos",
+  "gelatoPineCoreAddress": "0x5d41545c190637b9337ec5ffa89bac5ee0cb3a4c",
+  "erc20OrderRouterAddress": "0x260aB0aCb931D7Da784fC35c7E96c3B13213Abf1",
+  "startBlock": 2030303
+}

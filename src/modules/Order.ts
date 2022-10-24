@@ -23,5 +23,8 @@ export function getGelatoPineCoreAddressByNetwork(network: string): Address {
   if (network == "ropsten")
     return Address.fromString("0x0e5096D201Fe2985f5C26432A76f145D6e5D1453");
 
+  if (network == "cronos")
+    return Address.fromString("0x5d41545c190637b9337ec5ffa89bac5ee0cb3a4c");
+
   throw "No Address specified";
 }
