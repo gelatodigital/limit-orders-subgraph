@@ -1,6 +1,7 @@
 {
   "network": "bsc",
   "gelatoPineCoreAddress": "0x0c30D3d66bc7C73A83fdA929888c34dcb24FD599",
-  "erc20OrderRouterAddress": "0x64c7f3c2C19B41a6aD67bb5f4edc8EdbB3284F34",
+  "erc20OrderRouterOldAddress": "0x64c7f3c2C19B41a6aD67bb5f4edc8EdbB3284F34",
+  "erc20OrderRouterAddress": "0x0F5082aD48F73691874bc72477cF382B6B87b714",
   "startBlock": 11997719
 }

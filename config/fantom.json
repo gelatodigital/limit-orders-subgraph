@@ -1,6 +1,7 @@
 {
   "network": "fantom",
   "gelatoPineCoreAddress": "0x05Ad1094Eb6Cde564d732196F6754Ee464896031",
-  "erc20OrderRouterAddress": "0x59e61b95f20e940ac777e88fa2dfa0a6a4c40fa0",
+  "erc20OrderRouterOldAddress": "0x59e61b95f20e940ac777e88fa2dfa0a6a4c40fa0",
+  "erc20OrderRouterAddress": "0x97C1af451407e266fD57168e61D4B5af31894244",
   "startBlock": 11977539
 }
